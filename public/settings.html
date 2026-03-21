@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LADYBUGNODES V(5) · Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #0a0b0e;
+      --surface: #111318;
+      --surface2: #181c22;
+      --border: #1e242e;
+      --red: #ff3b5c;
+      --red-dim: rgba(255,59,92,0.12);
+      --green: #00e676;
+      --green-dim: rgba(0,230,118,0.10);
+      --amber: #ffab40;
+      --amber-dim: rgba(255,171,64,0.12);
+      --blue: #40c4ff;
+      --blue-dim: rgba(64,196,255,0.10);
+      --purple: #b388ff;
+      --purple-dim: rgba(179,136,255,0.10);
+      --gold: #ffd700;
+      --gold-dim: rgba(255,215,0,0.12);
+      --muted: #4a5568;
+      --text: #e2e8f0;
+      --text-dim: #718096;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Syne', sans-serif;
+      --radius: 12px;
+    }
+    
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,59,92,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,59,92,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+    
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,11,14,0.92);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      flex-wrap: wrap;
+    }
+    
+    .logo { display: flex; align-items: center; gap: 14px; }
+    
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--red-dim);
+      border: 1px solid rgba(255,59,92,0.3);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 24px rgba(255,59,92,0.25);
+    }
+    
+    .logo-text h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+    .logo-text h1 span { color: var(--red); }
+    .logo-text p { font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); margin-top: 3px; }
+    
+    .nav-tabs { display: flex; gap: 4px; }
+    
+    .nav-tab {
+      padding: 10px 18px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text-dim);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .nav-tab:hover { background: var(--surface); color: var(--text); }
+    .nav-tab.active { background: var(--surface); border-color: var(--border); color: var(--red); }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    
+    #user-name { color: var(--text); font-weight: 600; }
+    
+    /* Main */
+    main { padding: 32px 0 60px; }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-bottom: 32px;
+    }
+    
+    /* Settings Grid */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 24px;
+    }
+    
+    @media (max-width: 768px) {
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* Sidebar */
+    .settings-sidebar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+    
+    .sidebar-menu { display: flex; flex-direction: column; gap: 4px; }
+    
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .sidebar-item:hover { background: var(--surface2); color: var(--text); }
+    .sidebar-item.active { background: var(--purple-dim); color: var(--purple); }
+    
+    /* Content */
+    .settings-content {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    .settings-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    
+    .section-body { padding: 20px; }
+    
+    /* Form */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .form-group { margin-bottom: 16px; }
+    
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      font-family: var(--font-mono);
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    
+    .form-input:focus { border-color: var(--purple); }
+    .form-input:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .form-input::placeholder { color: var(--muted); }
+    
+    .form-hint {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      margin-top: 6px;
+    }
+    
+    /* Toggle */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .toggle-row:last-child { border-bottom: none; }
+    
+    .toggle-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .toggle-info p { font-size: 12px; color: var(--text-dim); }
+    
+    .toggle {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      background: var(--surface2);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.3s;
+      border: 1px solid var(--border);
+    }
+    
+    .toggle.active { background: var(--green-dim); border-color: rgba(0,230,118,0.25); }
+    
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      background: var(--text-dim);
+      border-radius: 50%;
+      transition: transform 0.3s, background 0.3s;
+    }
+    
+    .toggle.active::after { transform: translateX(22px); background: var(--green); }
+    
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    
+    .btn:hover { opacity: 0.85; }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .btn-primary { background: linear-gradient(135deg, var(--purple), var(--red)); color: white; }
+    .btn-secondary { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+    .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,59,92,0.25); }
+    .btn-success { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+    
+    .btn-group { display: flex; gap: 10px; margin-top: 16px; }
+    
+    /* API Keys */
+    .api-key-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--surface2);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    
+    .api-key-info { flex: 1; }
+    .api-key-info h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .api-key-info p { font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); }
+    
+    .api-key-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--purple);
+      background: var(--purple-dim);
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-right: 12px;
+    }
+    
+    /* Activity Log */
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .activity-item:last-child { border-bottom: none; }
+    
+    .activity-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    
+    .activity-icon.login { background: var(--green-dim); }
+    .activity-icon.bot { background: var(--blue-dim); }
+    .activity-icon.settings { background: var(--amber-dim); }
+    .activity-icon.security { background: var(--red-dim); }
+    
+    .activity-info { flex: 1; }
+    .activity-info h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .activity-info p { font-size: 11px; color: var(--text-dim); }
+    
+    .activity-time {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+    
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-item {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .stat-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .toast-item {
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      animation: slideIn 0.3s ease;
+      max-width: 340px;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    .toast-item.ok { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+    .toast-item.error { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,59,92,0.25); }
+    .toast-item.warn { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(255,171,64,0.25); }
+    
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    
+    footer a { color: var(--red); text-decoration: none; }
+  </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <div class="logo">
+          <div class="logo-icon">🐝</div>
+          <div class="logo-text">
+            <h1>LADYBUG<span>NODES</span></h1>
+            <p>Settings · V(5)</p>
+          </div>
+        </div>
+        
+        <nav class="nav-tabs">
+          <a href="/" class="nav-tab">Dashboard</a>
+          <a href="/panel-bots.html" class="nav-tab">Panel Bots</a>
+          <a href="/settings.html" class="nav-tab active">Settings</a>
+        </nav>
+        
+        <div class="user-info">
+          <span id="user-name">—</span>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <main>
+    <div class="container">
+      <h1 class="page-title">⚙️ Settings</h1>
+      <p class="page-subtitle">Manage your account, security, and notification preferences</p>
+      
+      <div class="settings-grid">
+        <!-- Sidebar -->
+        <aside class="settings-sidebar">
+          <nav class="sidebar-menu">
+            <a class="sidebar-item active" data-section="profile">👤 Profile</a>
+            <a class="sidebar-item" data-section="security">🔒 Security</a>
+            <a class="sidebar-item" data-section="notifications">🔔 Notifications</a>
+            <a class="sidebar-item" data-section="api">🔑 API Keys</a>
+            <a class="sidebar-item" data-section="activity">📊 Activity Log</a>
+          </nav>
+        </aside>
+        
+        <!-- Content -->
+        <div class="settings-content">
+          <!-- Profile Section -->
+          <div class="settings-section" id="section-profile">
+            <div class="section-header">
+              <span class="section-title">👤 Profile Information</span>
+            </div>
+            <div class="section-body">
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <div class="stat-value" id="stat-coins" style="color: var(--gold);">—</div>
+                  <div class="stat-label">Coins</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value" id="stat-bots" style="color: var(--blue);">—</div>
+                  <div class="stat-label">Bots</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value" id="stat-sessions" style="color: var(--purple);">—</div>
+                  <div class="stat-label">Sessions</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-value" id="stat-joined" style="color: var(--green);">—</div>
+                  <div class="stat-label">Days Active</div>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Username</label>
+                  <input type="text" class="form-input" id="profile-username" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-input" id="profile-email" />
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">WhatsApp Number</label>
+                  <input type="text" class="form-input" id="profile-phone" disabled />
+                  <div class="form-hint">Contact admin to change your number</div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Timezone</label>
+                  <input type="text" class="form-input" id="profile-timezone" placeholder="Africa/Harare" />
+                </div>
+              </div>
+              
+              <div class="btn-group">
+                <button class="btn btn-primary" onclick="saveProfile()">💾 Save Changes</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Security Section -->
+          <div class="settings-section" id="section-security" style="display: none;">
+            <div class="section-header">
+              <span class="section-title">🔒 Security Settings</span>
+            </div>
+            <div class="section-body">
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Two-Factor Authentication (2FA)</h4>
+                  <p>Add an extra layer of security to your account via WhatsApp</p>
+                </div>
+                <div class="toggle" id="toggle-2fa" onclick="toggle2FA()"></div>
+              </div>
+              
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Login Notifications</h4>
+                  <p>Get notified when someone logs into your account</p>
+                </div>
+                <div class="toggle active" id="toggle-login-notify" onclick="toggleSetting('loginNotify')"></div>
+              </div>
+              
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Session Timeout Alerts</h4>
+                  <p>Get notified before your session expires</p>
+                </div>
+                <div class="toggle" id="toggle-timeout-alert" onclick="toggleSetting('timeoutAlert')"></div>
+              </div>
+              
+              <div style="margin-top: 24px;">
+                <h4 style="font-size: 14px; margin-bottom: 12px;">Change Password</h4>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Current Password</label>
+                    <input type="password" class="form-input" id="current-password" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" class="form-input" id="new-password" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-input" id="confirm-new-password" />
+                  </div>
+                </div>
+                <div class="btn-group">
+                  <button class="btn btn-primary" onclick="changePassword()">🔑 Change Password</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Notifications Section -->
+          <div class="settings-section" id="section-notifications" style="display: none;">
+            <div class="section-header">
+              <span class="section-title">🔔 Notification Preferences</span>
+            </div>
+            <div class="section-body">
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Bot Start Notifications</h4>
+                  <p>Get notified when your bot starts</p>
+                </div>
+                <div class="toggle active" id="toggle-bot-start" onclick="toggleSetting('botStart')"></div>
+              </div>
+              
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Bot Stop Notifications</h4>
+                  <p>Get notified when your bot stops</p>
+                </div>
+                <div class="toggle active" id="toggle-bot-stop" onclick="toggleSetting('botStop')"></div>
+              </div>
+              
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Bot Crash Alerts</h4>
+                  <p>Get immediate alerts when your bot crashes</p>
+                </div>
+                <div class="toggle active" id="toggle-bot-crash" onclick="toggleSetting('botCrash')"></div>
+              </div>
+              
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Low Balance Warnings</h4>
+                  <p>Get notified when your coin balance is low</p>
+                </div>
+                <div class="toggle active" id="toggle-low-balance" onclick="toggleSetting('lowBalance')"></div>
+              </div>
+              
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Coin Transactions</h4>
+                  <p>Get notified when coins are added or deducted</p>
+                </div>
+                <div class="toggle" id="toggle-coins" onclick="toggleSetting('coins')"></div>
+              </div>
+              
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Marketing & Updates</h4>
+                  <p>Receive news about new features and updates</p>
+                </div>
+                <div class="toggle" id="toggle-marketing" onclick="toggleSetting('marketing')"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- API Keys Section -->
+          <div class="settings-section" id="section-api" style="display: none;">
+            <div class="section-header">
+              <span class="section-title">🔑 API Keys</span>
+              <button class="btn btn-success" onclick="generateAPIKey()">+ Generate New Key</button>
+            </div>
+            <div class="section-body">
+              <div class="form-hint" style="margin-bottom: 16px;">
+                API keys allow you to interact with LADYBUGNODES programmatically. Keep them secret!
+              </div>
+              
+              <div id="api-keys-list">
+                <div class="api-key-item">
+                  <div class="api-key-info">
+                    <h4>Default Key</h4>
+                    <p>Created: Jan 15, 2025</p>
+                  </div>
+                  <span class="api-key-value">lbn_••••••••••••</span>
+                  <button class="btn btn-secondary" onclick="copyAPIKey('xxx')">📋 Copy</button>
+                  <button class="btn btn-danger" onclick="revokeAPIKey('xxx')">🗑️</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Activity Log Section -->
+          <div class="settings-section" id="section-activity" style="display: none;">
+            <div class="section-header">
+              <span class="section-title">📊 Activity Log</span>
+            </div>
+            <div class="section-body" id="activity-log">
+              <div class="activity-item">
+                <div class="activity-icon login">🔐</div>
+                <div class="activity-info">
+                  <h4>Login from Chrome on Windows</h4>
+                  <p>IP: 192.168.1.1</p>
+                </div>
+                <span class="activity-time">2 mins ago</span>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon bot">🤖</div>
+                <div class="activity-info">
+                  <h4>Started bot "Ladybug Bot"</h4>
+                  <p>Session: abc123...</p>
+                </div>
+                <span class="activity-time">15 mins ago</span>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon settings">⚙️</div>
+                <div class="activity-info">
+                  <h4>Updated profile settings</h4>
+                </div>
+                <span class="activity-time">1 hour ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <div class="container">
+      LADYBUGNODES <span style="color:var(--red)">V(5)</span> •
+      Powered by <a href="https://render.com" target="_blank">Render.com</a>
+    </div>
+  </footer>
+  
+  <div id="toast"></div>
+  
+  <script>
+    // Auth check
+    const token = localStorage.getItem('lbn_token');
+    if (!token) location.href = '/login';
+    
+    let currentUser = JSON.parse(localStorage.getItem('lbn_user') || '{}');
+    let settings = {};
+    
+    // Headers
+    function authHeaders() {
+      return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+    }
+    
+    // Init
+    document.getElementById('user-name').textContent = currentUser.username || '—';
+    
+    // Load user data
+    async function loadUserData() {
+      try {
+        const r = await fetch('/api/auth/me', { headers: authHeaders() });
+        if (r.status === 401) { location.href = '/login'; return; }
+        const u = await r.json();
+        currentUser = { ...currentUser, ...u };
+        
+        document.getElementById('profile-username').value = u.username || '';
+        document.getElementById('profile-email').value = u.email || '';
+        document.getElementById('profile-phone').value = u.phone || '';
+        document.getElementById('profile-timezone').value = u.timezone || '';
+        
+        document.getElementById('stat-coins').textContent = u.coins || 0;
+        
+        // Load settings
+        if (u.settings) {
+          settings = u.settings;
+          applySettings();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    
+    loadUserData();
+    
+    // Sidebar navigation
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        
+        const section = this.dataset.section;
+        document.querySelectorAll('.settings-section').forEach(s => s.style.display = 'none');
+        document.getElementById(`section-${section}`).style.display = 'block';
+      });
+    });
+    
+    // Apply settings to toggles
+    function applySettings() {
+      const toggles = {
+        'toggle-2fa': settings.twoFactor,
+        'toggle-login-notify': settings.loginNotify !== false,
+        'toggle-timeout-alert': settings.timeoutAlert,
+        'toggle-bot-start': settings.botStart !== false,
+        'toggle-bot-stop': settings.botStop !== false,
+        'toggle-bot-crash': settings.botCrash !== false,
+        'toggle-low-balance': settings.lowBalance !== false,
+        'toggle-coins': settings.coins,
+        'toggle-marketing': settings.marketing
+      };
+      
+      Object.entries(toggles).forEach(([id, active]) => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('active', active);
+      });
+    }
+    
+    // Toggle setting
+    async function toggleSetting(key) {
+      settings[key] = !settings[key];
+      await saveSettings();
+    }
+    
+    // Toggle 2FA
+    async function toggle2FA() {
+      const enabled = !settings.twoFactor;
+      
+      if (enabled) {
+        // Request OTP to enable 2FA
+        try {
+          const r = await fetch('/api/auth/send-otp', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ type: '2fa-enable' })
+          });
+          const d = await r.json();
+          
+          if (d.ok) {
+            toast('Verification code sent via WhatsApp', 'ok');
+            // Show OTP input modal (simplified for now)
+            const otp = prompt('Enter the verification code sent to your WhatsApp:');
+            if (otp) {
+              settings.twoFactor = true;
+              await saveSettings();
+              document.getElementById('toggle-2fa').classList.add('active');
+            }
+          } else {
+            toast(d.error || 'Failed to send code', 'error');
+          }
+        } catch (err) {
+          toast('Network error', 'error');
+        }
+      } else {
+        settings.twoFactor = false;
+        await saveSettings();
+        document.getElementById('toggle-2fa').classList.remove('active');
+      }
+    }
+    
+    // Save settings
+    async function saveSettings() {
+      try {
+        const r = await fetch('/api/user/settings', {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify({ settings })
+        });
+        const d = await r.json();
+        
+        if (d.ok) {
+          toast('Settings saved', 'ok');
+          applySettings();
+        } else {
+          toast(d.error || 'Failed to save', 'error');
+        }
+      } catch (err) {
+        toast('Network error', 'error');
+      }
+    }
+    
+    // Save profile
+    async function saveProfile() {
+      const data = {
+        username: document.getElementById('profile-username').value.trim(),
+        email: document.getElementById('profile-email').value.trim(),
+        timezone: document.getElementById('profile-timezone').value.trim()
+      };
+      
+      try {
+        const r = await fetch('/api/user/profile', {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify(data)
+        });
+        const d = await r.json();
+        
+        if (d.ok) {
+          toast('Profile updated', 'ok');
+          currentUser = { ...currentUser, ...data };
+          localStorage.setItem('lbn_user', JSON.stringify(currentUser));
+          document.getElementById('user-name').textContent = data.username;
+        } else {
+          toast(d.error || 'Failed to update', 'error');
+        }
+      } catch (err) {
+        toast('Network error', 'error');
+      }
+    }
+    
+    // Change password
+    async function changePassword() {
+      const currentPassword = document.getElementById('current-password').value;
+      const newPassword = document.getElementById('new-password').value;
+      const confirmPassword = document.getElementById('confirm-new-password').value;
+      
+      if (!currentPassword || !newPassword) {
+        toast('Please fill all password fields', 'error');
+        return;
+      }
+      
+      if (newPassword !== confirmPassword) {
+        toast('New passwords do not match', 'error');
+        return;
+      }
+      
+      if (newPassword.length < 6) {
+        toast('Password must be at least 6 characters', 'error');
+        return;
+      }
+      
+      try {
+        const r = await fetch('/api/user/password', {
+          method: 'PUT',
+          headers: authHeaders(),
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const d = await r.json();
+        
+        if (d.ok) {
+          toast('Password changed successfully', 'ok');
+          document.getElementById('current-password').value = '';
+          document.getElementById('new-password').value = '';
+          document.getElementById('confirm-new-password').value = '';
+        } else {
+          toast(d.error || 'Failed to change password', 'error');
+        }
+      } catch (err) {
+        toast('Network error', 'error');
+      }
+    }
+    
+    // Generate API key
+    async function generateAPIKey() {
+      const name = prompt('Enter a name for this API key:');
+      if (!name) return;
+      
+      try {
+        const r = await fetch('/api/user/api-keys', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify({ name })
+        });
+        const d = await r.json();
+        
+        if (d.ok) {
+          toast('API key generated!', 'ok');
+          loadAPIKeys();
+        } else {
+          toast(d.error || 'Failed to generate key', 'error');
+        }
+      } catch (err) {
+        toast('Network error', 'error');
+      }
+    }
+    
+    // Toast
+    function toast(msg, type = 'ok') {
+      const el = document.createElement('div');
+      el.className = `toast-item ${type}`;
+      el.textContent = msg;
+      document.getElementById('toast').appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }
+  </script>
+</body>
+</html>
