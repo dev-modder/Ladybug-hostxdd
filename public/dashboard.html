@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LADYBUGNODES V5.2 - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --bg-card: #1e1e3f;
+            --accent-primary: #e94560;
+            --accent-secondary: #0f3460;
+            --accent-success: #00d9a5;
+            --accent-warning: #ffc107;
+            --accent-info: #17a2b8;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6c6c7c;
+            --border-color: #2a2a4a;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 15px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            padding: 10px 20px;
+            margin-top: 10px;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-radius: 8px;
+            margin: 2px 10px;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-card .label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+        }
+
+        .stat-card .change {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .stat-card .change.positive {
+            color: var(--accent-success);
+        }
+
+        .stat-card .change.negative {
+            color: var(--accent-primary);
+        }
+
+        /* Bots Grid */
+        .bots-section {
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .bots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 15px;
+        }
+
+        /* Bot Card */
+        .bot-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .bot-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .bot-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .bot-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bot-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .bot-status.running {
+            background: rgba(0, 217, 165, 0.2);
+            color: var(--accent-success);
+        }
+
+        .bot-status.stopped {
+            background: rgba(160, 160, 176, 0.2);
+            color: var(--text-secondary);
+        }
+
+        .bot-status.error {
+            background: rgba(233, 69, 96, 0.2);
+            color: var(--accent-primary);
+        }
+
+        .bot-status.starting {
+            background: rgba(23, 162, 184, 0.2);
+            color: var(--accent-info);
+        }
+
+        .bot-card-body {
+            padding: 15px;
+        }
+
+        .bot-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .bot-info-item {
+            font-size: 0.85rem;
+        }
+
+        .bot-info-label {
+            color: var(--text-muted);
+        }
+
+        .bot-info-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .bot-session-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .bot-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Bot Log Window */
+        .bot-log-window {
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: var(--bg-tertiary);
+            cursor: pointer;
+        }
+
+        .log-header-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .log-content {
+            height: 150px;
+            overflow-y: auto;
+            background: #0a0a15;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            display: none;
+        }
+
+        .log-content.expanded {
+            display: block;
+        }
+
+        .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .log-entry .time {
+            color: var(--text-muted);
+            margin-right: 10px;
+        }
+
+        .log-entry .level {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .log-entry .level.info { color: var(--accent-info); }
+        .log-entry .level.success { color: var(--accent-success); }
+        .log-entry .level.warn { color: var(--accent-warning); }
+        .log-entry .level.error { color: var(--accent-primary); }
+        .log-entry .level.bot { color: #8b5cf6; }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d63850;
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-secondary);
+        }
+
+        .btn-success {
+            background: var(--accent-success);
+            color: #000;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+        }
+
+        .btn-icon {
+            padding: 8px;
+            width: 32px;
+            height: 32px;
+            justify-content: center;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Templates Grid */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .template-card {
+            padding: 15px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .template-card.selected {
+            border-color: var(--accent-primary);
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .template-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .template-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .template-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { border-left: 4px solid var(--accent-success); }
+        .toast.error { border-left: 4px solid var(--accent-primary); }
+        .toast.info { border-left: 4px solid var(--accent-info); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .bots-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+    </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-bug"></i>
+                LADYBUGNODES
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-th-large"></i>
+                    Dashboard
+                </a>
+                <a class="nav-item" data-page="bots">
+                    <i class="fas fa-robot"></i>
+                    My Bots
+                </a>
+                <a class="nav-item" data-page="sessions">
+                    <i class="fas fa-link"></i>
+                    Sessions
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a class="nav-item" data-page="templates">
+                    <i class="fas fa-copy"></i>
+                    Templates
+                </a>
+                <a class="nav-item" data-page="webhooks">
+                    <i class="fas fa-plug"></i>
+                    Webhooks
+                </a>
+                <a class="nav-item" data-page="logs">
+                    <i class="fas fa-terminal"></i>
+                    Logs
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Account</div>
+                <a class="nav-item" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    Profile
+                </a>
+                <a class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+                <a class="nav-item" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="header-title">Dashboard</h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="createBotBtn">
+                    <i class="fas fa-plus"></i>
+                    Create Bot
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="label">Total Bots</div>
+                <div class="value" id="statTotalBots">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Running</div>
+                <div class="value" style="color: var(--accent-success)" id="statRunningBots">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Messages Today</div>
+                <div class="value" style="color: var(--accent-info)" id="statMessages">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Your Coins</div>
+                <div class="value" style="color: var(--accent-warning)" id="statCoins">0</div>
+            </div>
+        </div>
+
+        <!-- Bots Section -->
+        <section class="bots-section">
+            <div class="section-header">
+                <h2 class="section-title">Your Bots</h2>
+                <div>
+                    <button class="btn btn-secondary btn-sm" id="startAllBtn">
+                        <i class="fas fa-play"></i> Start All
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="stopAllBtn">
+                        <i class="fas fa-stop"></i> Stop All
+                    </button>
+                </div>
+            </div>
+
+            <div class="bots-grid" id="botsGrid">
+                <!-- Bot cards will be rendered here -->
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-robot"></i>
+                <h3>No bots yet</h3>
+                <p>Create your first bot to get started</p>
+                <button class="btn btn-primary" onclick="showCreateBotModal()">
+                    <i class="fas fa-plus"></i> Create Bot
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Create Bot Modal -->
+    <div class="modal-overlay" id="createBotModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Bot</h2>
+                <button class="modal-close" onclick="closeModal('createBotModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Step 1: Choose Template -->
+                <div id="createStep1">
+                    <h4 style="margin-bottom: 15px;">Choose a Template</h4>
+                    <div class="templates-grid" id="templatesGrid">
+                        <!-- Templates will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- Step 2: Configure Bot -->
+                <div id="createStep2" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Bot Name</label>
+                        <input type="text" class="form-control" id="botName" placeholder="My WhatsApp Bot">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Session Type</label>
+                        <select class="form-control" id="sessionType">
+                            <option value="auth_state">Auth State Folder (Recommended)</option>
+                            <option value="creds_json">creds.json File</option>
+                            <option value="session_id">Session ID / String</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="sessionInputGroup">
+                        <label class="form-label">Import Session (Optional)</label>
+                        <textarea class="form-control" id="sessionData" placeholder="Paste session data here or leave empty to create new session"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Auto-Restart</label>
+                        <select class="form-control" id="autoRestart">
+                            <option value="true">Enabled</option>
+                            <option value="false">Disabled</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('createBotModal')">Cancel</button>
+                <button class="btn btn-primary" id="createBotSubmit">Create Bot</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bot Details Modal -->
+    <div class="modal-overlay" id="botDetailsModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="botDetailsTitle">Bot Details</h2>
+                <button class="modal-close" onclick="closeModal('botDetailsModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="botDetailsBody">
+                <!-- Bot details will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // API Base URL
+        const API_BASE = '/api';
+
+        // State
+        let bots = [];
+        let templates = [];
+        let selectedTemplate = null;
+        let ws = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadBots();
+            await loadTemplates();
+            initWebSocket();
+        });
+
+        // WebSocket
+        function initWebSocket() {
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            ws = new WebSocket(`${wsProtocol}//${location.host}`);
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+
+            ws.onclose = () => {
+                setTimeout(initWebSocket, 3000);
+            };
+        }
+
+        function handleWebSocketMessage(data) {
+            switch (data.type) {
+                case 'log':
+                    addLogEntry(data);
+                    break;
+                case 'bot-status':
+                    updateBotStatus(data.botId, data.status);
+                    break;
+                case 'bot-created':
+                    loadBots();
+                    break;
+                default:
+                    console.log('WebSocket message:', data);
+            }
+        }
+
+        // Load Bots
+        async function loadBots() {
+            try {
+                const res = await fetch(`${API_BASE}/v2/bots`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (res.ok) {
+                    bots = await res.json();
+                    renderBots();
+                    updateStats();
+                }
+            } catch (error) {
+                showToast('Failed to load bots', 'error');
+            }
+        }
+
+        // Load Templates
+        async function loadTemplates() {
+            // Default templates (would come from API in production)
+            templates = [
+                { id: 'whatsapp-baileys', name: 'WhatsApp Bot', icon: 'fab fa-whatsapp', desc: 'Baileys library' },
+                { id: 'whatsapp-md', name: 'WhatsApp MD', icon: 'fab fa-whatsapp', desc: 'Multi-device' },
+                { id: 'pairing-code', name: 'Pairing Code', icon: 'fas fa-key', desc: 'No QR needed' },
+                { id: 'custom', name: 'Custom Bot', icon: 'fas fa-code', desc: 'Your own code' }
+            ];
+            renderTemplates();
+        }
+
+        // Render Bots
+        function renderBots() {
+            const grid = document.getElementById('botsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            if (bots.length === 0) {
+                grid.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            grid.innerHTML = bots.map(bot => createBotCard(bot)).join('');
+        }
+
+        function createBotCard(bot) {
+            const statusClass = bot.status.toLowerCase();
+            const sessionTypeLabel = bot.sessionType || 'auth_state';
+            const uptime = formatUptime(bot.uptime || 0);
+
+            return `
+                <div class="bot-card" data-bot-id="${bot.id}">
+                    <div class="bot-card-header">
+                        <div class="bot-name">
+                            <i class="fas fa-robot"></i>
+                            ${bot.name}
+                        </div>
+                        <span class="bot-status ${statusClass}">${bot.status}</span>
+                    </div>
+                    <div class="bot-card-body">
+                        <div class="bot-info">
+                            <div class="bot-info-item">
+                                <div class="bot-info-label">Session Type</div>
+                                <div class="bot-info-value">
+                                    <span class="bot-session-type">
+                                        <i class="fas fa-key"></i>
+                                        ${sessionTypeLabel}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="bot-info-item">
+                                <div class="bot-info-label">Uptime</div>
+                                <div class="bot-info-value">${uptime}</div>
+                            </div>
+                            <div class="bot-info-item">
+                                <div class="bot-info-label">Messages</div>
+                                <div class="bot-info-value">${bot.metrics?.messagesSent || 0}</div>
+                            </div>
+                            <div class="bot-info-item">
+                                <div class="bot-info-label">Errors</div>
+                                <div class="bot-info-value">${bot.metrics?.errors || 0}</div>
+                            </div>
+                        </div>
+                        <div class="bot-actions">
+                            ${bot.status === 'RUNNING' ? `
+                                <button class="btn btn-danger btn-sm" onclick="stopBot('${bot.id}')">
+                                    <i class="fas fa-stop"></i> Stop
+                                </button>
+                            ` : `
+                                <button class="btn btn-success btn-sm" onclick="startBot('${bot.id}')">
+                                    <i class="fas fa-play"></i> Start
+                                </button>
+                            `}
+                            <button class="btn btn-secondary btn-sm" onclick="restartBot('${bot.id}')">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="showBotDetails('${bot.id}')">
+                                <i class="fas fa-info"></i>
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="deleteBot('${bot.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Individual Log Window -->
+                        <div class="bot-log-window">
+                            <div class="log-header" onclick="toggleLogWindow('${bot.id}')">
+                                <span class="log-header-title">
+                                    <i class="fas fa-terminal"></i> Logs
+                                </span>
+                                <i class="fas fa-chevron-down" id="logChevron-${bot.id}"></i>
+                            </div>
+                            <div class="log-content" id="logContent-${bot.id}">
+                                <div class="empty-state" style="padding: 20px;">
+                                    <p>No logs yet</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Templates
+        function renderTemplates() {
+            const grid = document.getElementById('templatesGrid');
+            grid.innerHTML = templates.map(t => `
+                <div class="template-card" data-template-id="${t.id}" onclick="selectTemplate('${t.id}')">
+                    <div class="template-icon"><i class="${t.icon}"></i></div>
+                    <div class="template-name">${t.name}</div>
+                    <div class="template-desc">${t.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        // Template Selection
+        function selectTemplate(id) {
+            selectedTemplate = id;
+            document.querySelectorAll('.template-card').forEach(el => {
+                el.classList.toggle('selected', el.dataset.templateId === id);
+            });
+            document.getElementById('createStep2').style.display = 'block';
+        }
+
+        // Bot Actions
+        async function startBot(botId) {
+            try {
+                const res = await fetch(`${API_BASE}/v2/bots/${botId}/start`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                if (res.ok) {
+                    showToast('Bot starting...', 'info');
+                    await loadBots();
+                }
+            } catch (error) {
+                showToast('Failed to start bot', 'error');
+            }
+        }
+
+        async function stopBot(botId) {
+            try {
+                const res = await fetch(`${API_BASE}/v2/bots/${botId}/stop`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                if (res.ok) {
+                    showToast('Bot stopped', 'info');
+                    await loadBots();
+                }
+            } catch (error) {
+                showToast('Failed to stop bot', 'error');
+            }
+        }
+
+        async function restartBot(botId) {
+            try {
+                const res = await fetch(`${API_BASE}/v2/bots/${botId}/restart`, {
+                    method: 'POST',
+                    headers: getAuthHeaders()
+                });
+                
+                if (res.ok) {
+                    showToast('Bot restarting...', 'info');
+                }
+            } catch (error) {
+                showToast('Failed to restart bot', 'error');
+            }
+        }
+
+        async function deleteBot(botId) {
+            if (!confirm('Are you sure you want to delete this bot?')) return;
+            
+            try {
+                const res = await fetch(`${API_BASE}/v2/bots/${botId}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                
+                if (res.ok) {
+                    showToast('Bot deleted', 'success');
+                    await loadBots();
+                }
+            } catch (error) {
+                showToast('Failed to delete bot', 'error');
+            }
+        }
+
+        // Log Window
+        function toggleLogWindow(botId) {
+            const content = document.getElementById(`logContent-${botId}`);
+            const chevron = document.getElementById(`logChevron-${botId}`);
+            
+            content.classList.toggle('expanded');
+            chevron.classList.toggle('fa-chevron-down');
+            chevron.classList.toggle('fa-chevron-up');
+        }
+
+        function addLogEntry(log) {
+            const content = document.getElementById(`logContent-${log.botId}`);
+            if (!content) return;
+
+            // Remove empty state
+            const emptyState = content.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="time">${new Date(log.timestamp).toLocaleTimeString()}</span>
+                <span class="level ${log.level}">${log.level.toUpperCase()}</span>
+                <span class="message">${escapeHtml(log.message)}</span>
+            `;
+            content.appendChild(entry);
+            content.scrollTop = content.scrollHeight;
+        }
+
+        function updateBotStatus(botId, status) {
+            const card = document.querySelector(`[data-bot-id="${botId}"]`);
+            if (!card) return;
+
+            const statusEl = card.querySelector('.bot-status');
+            statusEl.className = `bot-status ${status.toLowerCase()}`;
+            statusEl.textContent = status;
+
+            // Refresh bot card
+            loadBots();
+        }
+
+        // Stats
+        function updateStats() {
+            const running = bots.filter(b => b.status === 'RUNNING').length;
+            
+            document.getElementById('statTotalBots').textContent = bots.length;
+            document.getElementById('statRunningBots').textContent = running;
+        }
+
+        // Create Bot
+        document.getElementById('createBotBtn').addEventListener('click', showCreateBotModal);
+
+        function showCreateBotModal() {
+            selectedTemplate = null;
+            document.getElementById('createStep2').style.display = 'none';
+            document.querySelectorAll('.template-card').forEach(el => el.classList.remove('selected'));
+            document.getElementById('createBotModal').classList.add('active');
+        }
+
+        document.getElementById('createBotSubmit').addEventListener('click', async () => {
+            const name = document.getElementById('botName').value;
+            const sessionType = document.getElementById('sessionType').value;
+            const sessionData = document.getElementById('sessionData').value;
+            const autoRestart = document.getElementById('autoRestart').value === 'true';
+
+            if (!selectedTemplate) {
+                showToast('Please select a template', 'error');
+                return;
+            }
+
+            if (!name) {
+                showToast('Please enter a bot name', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/v2/bots`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        name,
+                        templateId: selectedTemplate,
+                        sessionType,
+                        sessionData: sessionData || null,
+                        autoRestart
+                    })
+                });
+
+                if (res.ok) {
+                    showToast('Bot created successfully!', 'success');
+                    closeModal('createBotModal');
+                    await loadBots();
+                } else {
+                    const error = await res.json();
+                    showToast(error.error || 'Failed to create bot', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to create bot', 'error');
+            }
+        });
+
+        // Bot Details
+        async function showBotDetails(botId) {
+            const bot = bots.find(b => b.id === botId);
+            if (!bot) return;
+
+            document.getElementById('botDetailsTitle').textContent = bot.name;
+            document.getElementById('botDetailsBody').innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h4>Bot Information</h4>
+                        <table style="width: 100%; margin-top: 10px;">
+                            <tr><td style="padding: 8px 0; color: var(--text-muted);">ID</td><td>${bot.id}</td></tr>
+                            <tr><td style="padding: 8px 0; color: var(--text-muted);">Type</td><td>${bot.type}</td></tr>
+                            <tr><td style="padding: 8px 0; color: var(--text-muted);">Status</td><td><span class="bot-status ${bot.status.toLowerCase()}">${bot.status}</span></td></tr>
+                            <tr><td style="padding: 8px 0; color: var(--text-muted);">Session Type</td><td>${bot.sessionType || 'auth_state'}</td></tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h4>Metrics</h4>
+                        <table style="width: 100%; margin-top: 10px;">
+                            <tr><td style="padding: 8px 0; color: var(--text-muted);">Messages Sent</td><td>${bot.metrics?.messagesSent || 0}</td></tr>
+                            <tr><td style="padding: 8px 0; color: var(--text-muted);">Messages Received</td><td>${bot.metrics?.messagesReceived || 0}</td></tr>
+                            <tr><td style="padding: 8px 0; color: var(--text-muted);">Errors</td><td>${bot.metrics?.errors || 0}</td></tr>
+                            <tr><td style="padding: 8px 0; color: var(--text-muted);">Restart Count</td><td>${bot.restartCount || 0}</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <h4>Session Management</h4>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-secondary btn-sm" onclick="exportSession('${bot.id}')">
+                            <i class="fas fa-download"></i> Export Session
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importSession-${bot.id}').click()">
+                            <i class="fas fa-upload"></i> Import Session
+                        </button>
+                        <input type="file" id="importSession-${bot.id}" style="display: none" accept=".json,.txt" onchange="importSession('${bot.id}', this)">
+                    </div>
+                </div>
+            `;
+            document.getElementById('botDetailsModal').classList.add('active');
+        }
+
+        async function exportSession(botId) {
+            try {
+                const res = await fetch(`${API_BASE}/v2/bots/${botId}/session/export`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (res.ok) {
+                    const data = await res.json();
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `session-${botId}.json`;
+                    a.click();
+                    showToast('Session exported', 'success');
+                }
+            } catch (error) {
+                showToast('Failed to export session', 'error');
+            }
+        }
+
+        async function importSession(botId, input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const res = await fetch(`${API_BASE}/v2/bots/${botId}/session/import`, {
+                        method: 'POST',
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({
+                            data: e.target.result,
+                            type: file.name.endsWith('.json') ? 'creds_json' : 'session_id'
+                        })
+                    });
+
+                    if (res.ok) {
+                        showToast('Session imported', 'success');
+                    } else {
+                        showToast('Failed to import session', 'error');
+                    }
+                } catch (error) {
+                    showToast('Failed to import session', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Utilities
+        function getAuthHeaders() {
+            const token = localStorage.getItem('token');
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function formatUptime(ms) {
+            if (!ms) return '0s';
+            const seconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (days > 0) return `${days}d ${hours % 24}h`;
+            if (hours > 0) return `${hours}h ${minutes % 60}m`;
+            if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+            return `${seconds}s`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Start/Stop All
+        document.getElementById('startAllBtn').addEventListener('click', async () => {
+            for (const bot of bots) {
+                if (bot.status !== 'RUNNING') {
+                    await startBot(bot.id);
+                }
+            }
+        });
+
+        document.getElementById('stopAllBtn').addEventListener('click', async () => {
+            for (const bot of bots) {
+                if (bot.status === 'RUNNING') {
+                    await stopBot(bot.id);
+                }
+            }
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        });
+    </script>
+</body>
+</html>
