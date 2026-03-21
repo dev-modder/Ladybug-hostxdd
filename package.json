@@ -1,7 +1,7 @@
 {
   "name": "ladybugnodes",
-  "version": "5.1.0",
-  "description": "LADYBUGNODES — Multi-Host WhatsApp Bot Dashboard with MongoDB",
+  "version": "5.2.0",
+  "description": "LADYBUGNODES — Ultimate Multi-Host Bot Dashboard with Multi-Auth Sessions, Per-Bot Logging, and MongoDB",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

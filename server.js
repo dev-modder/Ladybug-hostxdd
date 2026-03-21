@@ -20,7 +20,7 @@ const AdmZip     = require('adm-zip');
 
 // ───────── Config ──────────────────────────────────────────────────────────────────────────────
 const PORT         = process.env.PORT || 3000;
-const VERSION      = '5.0.0';
+const VERSION      = '5.2.0';
 const RENDER_URL   = process.env.RENDER_URL || '';
 const JWT_SECRET   = process.env.JWT_SECRET || 'ladybugnodes-secret-change-me';
 const PING_INTERVAL_MS = 14 * 60 * 1000;  // 14 minutes
@@ -1182,6 +1182,31 @@ try {
     log('API V2 routes mounted', 'ok');
 } catch (error) {
     log(`API V2 routes not loaded: ${error.message}`, 'warn');
+}
+
+// Bot Manager Routes (V2 Enhanced)
+let botManagerInstance = null;
+let loggerManagerInstance = null;
+let sessionManagerInstance = null;
+
+try {
+    const { initBotManagerRoutes, getBotManager, getLoggerManager, getSessionManager } = require('./routes/botManager');
+    
+    // Initialize bot manager routes
+    const managers = initBotManagerRoutes(app, {
+        dataDir: DATA_DIR,
+        botsDir: UPLOADED_BOTS_DIR,
+        sessionsDir: path.join(DATA_DIR, 'sessions'),
+        logDir: path.join(DATA_DIR, 'logs')
+    });
+    
+    botManagerInstance = getBotManager();
+    loggerManagerInstance = getLoggerManager();
+    sessionManagerInstance = getSessionManager();
+    
+    log('Bot Manager V2 routes initialized', 'ok');
+} catch (error) {
+    log(`Bot Manager V2 routes not loaded: ${error.message}`, 'warn');
 }
 
 // MongoDB Status endpoint
@@ -2592,7 +2617,7 @@ async function initializeApp() {
 // ═════════════════════════════════════════════════════════════════════════════════════════════════
 initializeApp().then(() => {
     server.listen(PORT, () => {
-        log(`LADYBUGNODES V(5.1) running on port ${PORT}`, 'ok');
+        log(`LADYBUGNODES V(5.2) running on port ${PORT}`, 'ok');
         if (USE_MONGODB) log('MongoDB database connected', 'ok');
         else log('Using file-based storage', 'info');
         if (RENDER_URL) log(`Keep-alive targeting: ${RENDER_URL}`, 'info');
@@ -2602,7 +2627,7 @@ initializeApp().then(() => {
     console.error('Failed to initialize:', err);
     // Start server anyway with file-based storage
     server.listen(PORT, () => {
-        log(`LADYBUGNODES V(5.1) running on port ${PORT} (file-based mode)`, 'ok');
+        log(`LADYBUGNODES V(5.2) running on port ${PORT} (file-based mode)`, 'ok');
     });
 });
 
