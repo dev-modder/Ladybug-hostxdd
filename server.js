@@ -20,7 +20,7 @@ const AdmZip     = require('adm-zip');
 
 // ───────── Config ──────────────────────────────────────────────────────────────────────────────
 const PORT         = process.env.PORT || 3000;
-const VERSION      = '7.0.0';
+const VERSION      = '7.1.0';
 const RENDER_URL   = process.env.RENDER_URL || '';
 const JWT_SECRET   = process.env.JWT_SECRET || 'ladybugnodes-secret-change-me';
 const PING_INTERVAL_MS = 14 * 60 * 1000;  // 14 minutes
@@ -1306,6 +1306,21 @@ try {
     log('Payment system initialized (ZiG/USD)', 'ok');
 } catch (error) {
     log(`Payment system not loaded: ${error.message}`, 'warn');
+}
+
+// Coin Rewards System
+let coinRewardSystemInstance = null;
+try {
+    const { coinRewardSystem } = require('./utils/coinRewards');
+    coinRewardSystemInstance = coinRewardSystem;
+    coinRewardSystemInstance.initialize();
+    
+    // Mount coin rewards routes
+    const coinRewardsRoutes = require('./routes/coinRewards');
+    app.use('/api/coins', coinRewardsRoutes);
+    log('Coin rewards system initialized (2 coins/day)', 'ok');
+} catch (error) {
+    log(`Coin rewards system not loaded: ${error.message}`, 'warn');
 }
 
 // Subscription check helper
