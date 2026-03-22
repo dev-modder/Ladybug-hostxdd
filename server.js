@@ -21,7 +21,7 @@ const AdmZip     = require('adm-zip');
 // ───────── Config ──────────────────────────────────────────────────────────────────────────────
 const PORT         = process.env.PORT || 3000;
 const VERSION      = '5.2.0';
-const RENDER_URL   = process.env.RENDER_URL || '';
+const RENDER_URL   = process.env.RENDER_URL || 'https://ladybug-host.zone.id/';
 const JWT_SECRET   = process.env.JWT_SECRET || 'ladybugnodes-secret-change-me';
 const PING_INTERVAL_MS = 14 * 60 * 1000;  // 14 minutes
 
