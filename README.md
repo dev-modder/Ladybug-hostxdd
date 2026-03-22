@@ -1,256 +1,69 @@
-# 🐝 LADYBUGNODES V(5.2)
+# 🐝 LADYBUGNODES V(7)
 
-**Version:** 5.2.0  
+**Version:** 7.0.0  
 **Developer:** [Dev-Ntando](https://github.com/dev-modder)
 
-A powerful multi-host dashboard for running multiple WhatsApp bots on Render.com. Includes a full login system, coin economy, admin panel, **custom bot upload support**, **multi-auth sessions**, and **per-bot logging**.
+The ultimate bot hosting platform with **ZiG and USD payments**, multi-auth sessions, per-bot logging, and support for WhatsApp, Telegram, Discord, and Slack bots.
 
 ---
 
-## ✨ What's New in V(5.2)
+## ✨ What's New in V(7)
 
-### 🎉 Major New Features
+### 💰 Payment System
+- **ZiG (Zimbabwe Gold)** and **USD** payment support
+- Multiple payment methods: Mobile Money, Bank Transfer, PayPal, Stripe
+- Subscription-based hosting (paid plans required)
+- Payment history and receipts
 
-- **🔐 Multi-Auth Session System** — Support for multiple session types:
-  - `creds.json` — Baileys-style credentials
-  - `session_id` — String session / Pairing code sessions
-  - `auth_state` — Multi-file auth state folders
-  - Auto-detection of session type
+### 🤖 Multi-Platform Bot Support
+- **WhatsApp** — Baileys, MD, Pairing Code
+- **Telegram** — node-telegram-bot-api
+- **Discord** — discord.js with slash commands
+- **Slack** — Bolt SDK
+- **Custom** — Your own bot code
 
-- **📋 Per-Bot Logging** — Each bot has its own isolated log window:
-  - Real-time log streaming per bot
-  - Log filtering by level and search
-  - Export logs (JSON, JSONL, text, CSV, HTML)
-  - Historical log access
+### 🔐 Multi-Auth Session System
+- `creds.json` — Baileys credentials
+- `session_id` — String session / Pairing code
+- `auth_state` — Multi-file auth state
+- Auto-detection of session type
 
-- **🎯 Bot Templates** — Create bots from pre-built templates:
-  - WhatsApp Bot (Baileys) — QR code authentication
-  - WhatsApp Bot (MD) — Multi-device support
-  - WhatsApp Bot (Pairing Code) — No QR needed
-  - Custom Bot — Empty template
+### 📋 Per-Bot Logging
+- Individual log windows for each bot
+- Real-time log streaming
+- Log filtering and search
+- Export to JSON, JSONL, text, CSV, HTML
 
-- **📁 Bot Categories** — Organize bots into categories/folders
+### 📦 Subscription Plans
 
-- **🔄 Bot Cloning** — Clone existing bots with one click
-
-- **⚡ Bulk Operations** — Start, stop, or delete multiple bots at once
-
-- **💚 Health Monitoring** — Real-time bot health status
-
-### Previous Features (V5.0-V5.1)
-
-- **🔐 Login System** — JWT-based authentication. Each user gets their own secure account.
-- **🪙 Coin System** — Starting a bot costs 5 coins. Admins top up coins per user.
-- **👑 Admin Panel** — Create users, add/deduct coins, delete users.
-- **🔐 Multi-tenant** — Users only see their own sessions; admins see everything.
-- **📦 Panel Bots** — Upload your own custom bots as ZIP files or from GitHub and run them!
-- **🚀 Render-ready** — Includes `render.yaml` for one-click deploys with health checks.
-- **🌐 GitHub Integration** — Clone bots directly from GitHub repositories.
-- **🛠️ Environment Variables** — Configure bots with custom environment variables.
-- **📁 File Browser** — View and edit bot files directly from the dashboard.
-- **🔄 Auto-Restart** — Configure bots to auto-restart on crash.
-- **🗄️ MongoDB Support** — Optional MongoDB integration for scalable data storage.
+| Plan | Price (USD) | Price (ZiG) | Bots | Storage |
+|------|-------------|-------------|------|---------|
+| Starter | $5/mo | 161 ZiG/mo | 2 | 100MB |
+| Pro | $15/mo | 484 ZiG/mo | 10 | 500MB |
+| Enterprise | $50/mo | 1,613 ZiG/mo | 50 | 5GB |
+| Unlimited | $100/mo | 3,225 ZiG/mo | ∞ | ∞ |
 
 ---
 
 ## 🚀 Deployment on Render.com
 
-### Step 1: Push to GitHub
-```bash
-git init
-git add .
-git commit -m "LADYBUGNODES V(5.2)"
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-git push -u origin main
-```
+### Quick Deploy
+1. Fork/Clone this repository
+2. Go to [Render Dashboard](https://dashboard.render.com/)
+3. Click **New → Web Service**
+4. Connect your repository
+5. Render auto-detects `render.yaml`
+6. Set environment variables
+7. Deploy!
 
-### Step 2: Create Web Service on Render
-1. Go to [Render Dashboard](https://dashboard.render.com/)
-2. Click **New → Web Service**
-3. Connect your GitHub repository
-4. Render will auto-detect `render.yaml` — just click **Create Web Service**
+### Environment Variables
 
-### Step 3: Set Environment Variables
-
-In the Render dashboard → **Environment** tab:
-
-| Variable          | Required | Description                                      |
-|-------------------|----------|--------------------------------------------------|
-| `RENDER_URL`      | ✅ Yes   | Your service URL (e.g. `https://xxx.onrender.com`) |
-| `ADMIN_USERNAME`  | ✅ Yes   | Admin login username (default: `devntando`)          |
-| `ADMIN_PASSWORD`  | ✅ Yes   | Admin login password (default: `ntando`)       |
-| `JWT_SECRET`      | Auto     | Auto-generated by render.yaml                    |
-| `MONGODB_URI`     | Optional | MongoDB connection string for persistent storage |
-
-> ⚠️ Always change `ADMIN_PASSWORD` before deploying!
-
----
-
-## 🔐 Login System
-
-- Visit `https://your-service.onrender.com/login`
-- Default credentials: `devntando` / `ntando` (change via env vars!)
-- JWT tokens last 7 days
-- Admins can create user accounts from the Admin Panel
-
----
-
-## 🪙 Coin System
-
-- Every user has a coin balance
-- **Starting a bot costs 5 coins**
-- Admins are exempt from coin costs
-- New users get **50 coins** by default (configurable)
-- Admins can add/deduct coins at any time from the Admin Panel
-
----
-
-## 📦 Panel Bots (Custom Bot Upload)
-
-The Panel Bots feature allows developers to upload and run their own custom bots!
-
-### Uploading a Bot
-1. Click **"📦 Panel Bots"** in the header or navigate to `/panel-bots.html`
-2. Click **"📤 Upload Bot"** or **"🔗 Upload from GitHub"**
-3. Fill in:
-   - **Bot Name**: A friendly name for your bot
-   - **Description**: What your bot does
-   - **Entry Point**: The main JavaScript file (default: `index.js`)
-   - **Bot ZIP File**: A ZIP file containing your bot code OR
-   - **GitHub URL**: Clone directly from a GitHub repository
-4. Click **"Upload Bot"**
-
-### ZIP File Requirements
-- Must contain a valid Node.js project
-- Should include `package.json` if dependencies are needed
-- The entry point file must exist (default: `index.js`)
-- Dependencies will be auto-installed on upload
-
-### GitHub Upload
-- Provide the repository URL (e.g., `https://github.com/user/repo`)
-- Specify the branch (default: `main`)
-
----
-
-## 🔐 Multi-Auth Session System
-
-LADYBUGNODES V5.2 supports multiple session authentication methods:
-
-### Supported Session Types
-
-| Type | Description | Use Case |
-|------|-------------|----------|
-| `creds.json` | Baileys credentials file | Standard WhatsApp bots |
-| `session_id` | String session / Pairing code | Bots using pairing code |
-| `auth_state` | Multi-file auth state | Advanced multi-device bots |
-
-### Importing Sessions
-
-1. Navigate to your bot's panel
-2. Click **"Import Session"**
-3. Upload your `creds.json` or `session_id` file
-4. The system auto-detects the session type
-
-### Exporting Sessions
-
-1. Click **"Export Session"** on your bot
-2. Choose the format (creds.json or session_id)
-3. Download the session file
-
----
-
-## 📋 Per-Bot Logging
-
-Each bot has its own isolated log window for better debugging:
-
-### Features
-- **Real-time streaming** — Watch logs as they come in
-- **Log levels** — Filter by debug, info, warn, error, success
-- **Search** — Search through logs for specific messages
-- **Export** — Download logs in multiple formats
-
-### Accessing Logs
-1. Navigate to **Panel Bots**
-2. Find your bot card
-3. Click **"Logs"** to expand the log window
-4. Use the filter dropdown to filter by level
-
-### Log Export Formats
-- **JSON** — Structured data for analysis
-- **JSONL** — One log per line (for log processors)
-- **Text** — Plain text format
-- **CSV** — Spreadsheet compatible
-- **HTML** — Styled HTML report
-
----
-
-## 🎯 Bot Templates
-
-Create bots quickly from pre-built templates:
-
-### Available Templates
-
-1. **WhatsApp Bot (Baileys)**
-   - Uses `@whiskeysockets/baileys`
-   - QR code authentication
-   - Basic message handling
-
-2. **WhatsApp Bot (MD)**
-   - Multi-device support
-   - Auth state based
-
-3. **WhatsApp Bot (Pairing Code)**
-   - No QR code needed
-   - Phone number + pairing code
-
-4. **Custom Bot**
-   - Empty template
-   - Start from scratch
-
-### Creating from Template
-1. Go to **Panel Bots**
-2. Click **"Create from Template"**
-3. Select a template
-4. Enter bot name
-5. Click **Create**
-
----
-
-## 🗄️ MongoDB Integration
-
-LADYBUGNODES supports MongoDB for persistent, scalable storage:
-
-### Setup
-1. Create a MongoDB database (MongoDB Atlas, self-hosted, etc.)
-2. Get your connection string
-3. Set `MONGODB_URI` environment variable
-
-### Features with MongoDB
-- Persistent user sessions
-- Activity logging
-- Analytics
-- Bot metrics storage
-
-### Without MongoDB
-The system works perfectly with file-based storage. All core features work without MongoDB.
-
----
-
-## 🛠️ Environment Variables
-
-### Core Variables
-```
-PORT=3000                    # Server port (auto-set on Render)
-RENDER_URL=https://xxx.onrender.com  # Your service URL
-JWT_SECRET=your-secret-key   # JWT signing secret
-ADMIN_USERNAME=devntando     # Admin username
-ADMIN_PASSWORD=ntando        # Admin password (CHANGE THIS!)
-```
-
-### MongoDB (Optional)
-```
-MONGODB_URI=mongodb+srv://...  # MongoDB connection string
-```
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ADMIN_USERNAME` | ✅ | Admin username |
+| `ADMIN_PASSWORD` | ✅ | Admin password |
+| `JWT_SECRET` | ✅ | Secret for JWT tokens |
+| `MONGODB_URI` | Optional | MongoDB connection string |
 
 ---
 
@@ -258,101 +71,112 @@ MONGODB_URI=mongodb+srv://...  # MongoDB connection string
 
 ```
 ladybugnodes/
-├── server.js              # Main server file
+├── server.js              # Main server
 ├── routes/
-│   ├── api.js            # API V2 routes (MongoDB)
-│   └── botManager.js     # Bot management routes
+│   ├── api.js            # API V2 routes
+│   ├── botManager.js     # Bot management
+│   └── payments.js       # Payment routes (ZiG/USD)
 ├── utils/
-│   ├── botManager.js     # Bot lifecycle management
+│   ├── botManager.js     # Bot lifecycle
 │   ├── botLogger.js      # Per-bot logging
 │   ├── sessionAuth.js    # Multi-auth sessions
-│   ├── dataLayer.js      # Hybrid data layer
-│   └── mongodb-setup.js  # MongoDB connection
+│   ├── paymentSystem.js  # Payment logic
+│   └── dataLayer.js      # Hybrid data layer
 ├── models/               # MongoDB models
-├── public/               # Frontend files
+├── public/
 │   ├── index.html
-│   ├── dashboard.html    # New V5.2 dashboard
-│   ├── panel-bots.html
+│   ├── pricing.html      # Pricing page
+│   ├── dashboard.html
 │   └── ...
-├── data/                 # File-based storage
-│   ├── sessions/
-│   ├── logs/
-│   └── uploaded-bots/
 └── scripts/
-    └── seed.js           # Database seeding
+    └── cleanup.js        # Daily cleanup
 ```
 
 ---
 
-## 📡 API Endpoints
+## 💳 Payment Methods
+
+### ZiG Payments
+- **Mobile Money** — Dial *123#
+- **Bank Transfer** — Reserve Bank of Zimbabwe
+
+### USD Payments
+- **PayPal** — payments@ladybugnodes.com
+- **Credit/Debit Card** — via Stripe
+- **Bank Transfer** — Standard Chartered
+
+---
+
+## 🔧 API Endpoints
 
 ### Authentication
 ```
+POST /api/signup          # Simple signup (no OTP)
+POST /api/auth/signup     # Full signup (with OTP)
 POST /api/login           # Login
-POST /api/signup          # Create account
-POST /api/logout          # Logout
 ```
 
-### Sessions
+### Payments
 ```
-GET  /api/sessions        # List sessions
-POST /api/sessions        # Create session
-DELETE /api/sessions/:id  # Delete session
-```
-
-### Panel Bots
-```
-GET  /api/panel-bots      # List bots
-POST /api/panel-bots      # Create bot
-POST /api/panel-bots/:id/start   # Start bot
-POST /api/panel-bots/:id/stop    # Stop bot
-DELETE /api/panel-bots/:id       # Delete bot
+GET  /api/payments/plans           # Get pricing plans
+GET  /api/payments/subscription    # Get user subscription
+POST /api/payments/create          # Create payment
+POST /api/payments/:id/confirm     # Confirm payment
+GET  /api/payments/history         # Payment history
 ```
 
-### Bot Manager V2 (New in 5.2)
+### Bots
 ```
-GET  /api/v2/bots                    # List all bots
-GET  /api/v2/bots/templates          # Get templates
-POST /api/v2/bots/from-template      # Create from template
-POST /api/v2/bots/:id/clone          # Clone a bot
-GET  /api/v2/bots/:id/logs           # Get bot logs
-GET  /api/v2/bots/:id/logs/stream    # SSE log streaming
-GET  /api/v2/bots/:id/session        # Get session info
-POST /api/v2/bots/:id/session/import # Import session
-GET  /api/v2/bots/:id/session/export # Export session
-POST /api/v2/bots/bulk/start         # Bulk start
-POST /api/v2/bots/bulk/stop          # Bulk stop
+GET  /api/panel-bots               # List bots
+POST /api/panel-bots               # Create bot
+POST /api/panel-bots/:id/start     # Start bot
+POST /api/panel-bots/:id/stop      # Stop bot
+GET  /api/v2/bots/:id/logs         # Get bot logs
 ```
 
 ---
 
-## 🔧 Troubleshooting
+## 🤖 Bot Templates
 
-### Bot won't start
-- Check if `package.json` exists in bot folder
-- Verify entry point file exists
-- Check logs for errors
+### WhatsApp Bot (Baileys)
+```javascript
+const { makeWASocket, useMultiFileAuthState } = require('@whiskeysockets/baileys');
+// QR code authentication
+```
 
-### Session not working
-- Try re-importing the session
-- Check if session is valid (not logged out)
-- Verify session type matches your bot
+### Telegram Bot
+```javascript
+const TelegramBot = require('node-telegram-bot-api');
+const bot = new TelegramBot(token, { polling: true });
+// Handle commands and messages
+```
 
-### Memory issues
-- Reduce number of running bots
-- Check for memory leaks in bot code
-- Increase Render plan memory
+### Discord Bot
+```javascript
+const { Client, GatewayIntentBits } = require('discord.js');
+const client = new Client({ intents: [...] });
+// Slash commands and events
+```
+
+### Slack Bot
+```javascript
+const { App } = require('@slack/bolt');
+const app = new App({ token, signingSecret });
+// Events and commands
+```
 
 ---
 
 ## 📄 License
 
-MIT License - See LICENSE file for details.
+MIT License
 
 ---
 
 ## 🙏 Credits
 
 - Developer: [Dev-Ntando](https://github.com/dev-modder)
-- WhatsApp Library: [@whiskeysockets/baileys](https://github.com/WhiskeySockets/Baileys)
-- Built with Express.js, WebSocket, and ❤️
+- WhatsApp: [@whiskeysockets/baileys](https://github.com/WhiskeySockets/Baileys)
+- Telegram: [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
+- Discord: [discord.js](https://discord.js.org/)
+- Slack: [@slack/bolt](https://api.slack.com/tools/bolt)

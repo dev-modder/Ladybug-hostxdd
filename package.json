@@ -1,7 +1,7 @@
 {
   "name": "ladybugnodes",
-  "version": "5.2.0",
-  "description": "LADYBUGNODES — Ultimate Multi-Host Bot Dashboard with Multi-Auth Sessions, Per-Bot Logging, and MongoDB",
+  "version": "7.0.0",
+  "description": "LADYBUGNODES V(7) — Ultimate Bot Hosting Platform with ZiG/USD Payments, Multi-Auth Sessions, Per-Bot Logging",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
