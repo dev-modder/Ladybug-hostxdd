@@ -31,6 +31,7 @@ const BotType = {
     WHATSAPP_LEGACY: 'whatsapp-legacy',
     TELEGRAM: 'telegram',
     DISCORD: 'discord',
+    SLACK: 'slack',
     CUSTOM: 'custom'
 };
 
@@ -628,6 +629,229 @@ console.log('Hello from custom bot!');
                 }, null, 2)
             }
         });
+
+        // Telegram Bot Template
+        this.templates.set('telegram', {
+            id: 'telegram',
+            name: 'Telegram Bot',
+            type: BotType.TELEGRAM,
+            description: 'A Telegram bot using node-telegram-bot-api',
+            files: {
+                'index.js': `// Telegram Bot - LADYBUGNODES V(7)
+const TelegramBot = require('node-telegram-bot-api');
+
+// Get token from environment
+const token = process.env.TELEGRAM_BOT_TOKEN;
+
+if (!token) {
+    console.error('ERROR: TELEGRAM_BOT_TOKEN not set in environment');
+    process.exit(1);
+}
+
+// Create bot
+const bot = new TelegramBot(token, { polling: true });
+
+console.log('Telegram Bot started!');
+
+// Handle /start command
+bot.onText(/\\/start/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Welcome to LADYBUGNODES Bot! 🐝\\n\\nUse /help to see available commands.');
+});
+
+// Handle /help command
+bot.onText(/\\/help/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Available commands:\\n/start - Start the bot\\n/help - Show this help\\n/echo <text> - Echo back your text');
+});
+
+// Handle /echo command
+bot.onText(/\\/echo (.+)/, (msg, match) => {
+    const chatId = msg.chat.id;
+    const resp = match[1];
+    bot.sendMessage(chatId, resp);
+});
+
+// Handle any message
+bot.on('message', (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text;
+    
+    // Log received messages
+    console.log(\`Received: "\${text}" from \${chatId}\`);
+});
+
+// Error handling
+bot.on('polling_error', (error) => {
+    console.error('Polling error:', error.message);
+});
+
+console.log('Bot is running...');
+`,
+                'package.json': JSON.stringify({
+                    name: 'telegram-bot',
+                    version: '1.0.0',
+                    main: 'index.js',
+                    scripts: { start: 'node index.js' },
+                    dependencies: {
+                        'node-telegram-bot-api': '^0.64.0'
+                    }
+                }, null, 2)
+            },
+            dependencies: ['node-telegram-bot-api']
+        });
+
+        // Discord Bot Template
+        this.templates.set('discord', {
+            id: 'discord',
+            name: 'Discord Bot',
+            type: BotType.DISCORD,
+            description: 'A Discord bot using discord.js',
+            files: {
+                'index.js': `// Discord Bot - LADYBUGNODES V(7)
+const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
+
+// Get token from environment
+const token = process.env.DISCORD_BOT_TOKEN;
+const clientId = process.env.DISCORD_CLIENT_ID;
+
+if (!token) {
+    console.error('ERROR: DISCORD_BOT_TOKEN not set in environment');
+    process.exit(1);
+}
+
+// Create client with intents
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
+});
+
+// Commands
+const commands = [
+    new SlashCommandBuilder()
+        .setName('ping')
+        .setDescription('Check if bot is responsive'),
+    new SlashCommandBuilder()
+        .setName('hello')
+        .setDescription('Say hello!')
+];
+
+// Register commands
+if (clientId) {
+    const rest = new REST({ version: '10' }).setToken(token);
+    (async () => {
+        try {
+            console.log('Registering slash commands...');
+            await rest.put(Routes.applicationCommands(clientId), { body: commands });
+            console.log('Slash commands registered!');
+        } catch (error) {
+            console.error('Error registering commands:', error.message);
+        }
+    })();
+}
+
+// Ready event
+client.once('ready', () => {
+    console.log(\`Discord Bot logged in as \${client.user.tag}\`);
+});
+
+// Interaction handler
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+
+    const { commandName } = interaction;
+
+    if (commandName === 'ping') {
+        await interaction.reply('Pong! 🐝');
+    } else if (commandName === 'hello') {
+        await interaction.reply('Hello from LADYBUGNODES! 👋');
+    }
+});
+
+// Message handler
+client.on('messageCreate', message => {
+    if (message.author.bot) return;
+    
+    // Log messages
+    console.log(\`Message in \${message.guild?.name || 'DM'}: \${message.content}\`);
+    
+    // Simple responses
+    if (message.content.toLowerCase() === 'hello') {
+        message.reply('Hi there! 🐝');
+    }
+});
+
+// Error handling
+client.on('error', error => {
+    console.error('Discord client error:', error.message);
+});
+
+// Login
+client.login(token);
+`,
+                'package.json': JSON.stringify({
+                    name: 'discord-bot',
+                    version: '1.0.0',
+                    main: 'index.js',
+                    scripts: { start: 'node index.js' },
+                    dependencies: {
+                        'discord.js': '^14.14.0'
+                    }
+                }, null, 2)
+            },
+            dependencies: ['discord.js']
+        });
+
+        // Slack Bot Template
+        this.templates.set('slack', {
+            id: 'slack',
+            name: 'Slack Bot',
+            type: BotType.SLACK,
+            description: 'A Slack bot using Bolt SDK',
+            files: {
+                'index.js': `// Slack Bot - LADYBUGNODES V(7)
+const { App } = require('@slack/bolt');
+
+// Get credentials from environment
+const app = new App({
+    token: process.env.SLACK_BOT_TOKEN,
+    signingSecret: process.env.SLACK_SIGNING_SECRET,
+    socketMode: true,
+    appToken: process.env.SLACK_APP_TOKEN
+});
+
+// Listen to messages
+app.message('hello', async ({ message, say }) => {
+    await say(\`Hey there <@\${message.user}>! 🐝\`);
+});
+
+// Slash command
+app.command('/ladybug', async ({ command, ack, respond }) => {
+    await ack();
+    await respond(\`Hello from LADYBUGNODES! Your command: \${command.text}\`);
+});
+
+// Start app
+(async () => {
+    await app.start();
+    console.log('Slack Bot is running! ⚡️');
+})();
+`,
+                'package.json': JSON.stringify({
+                    name: 'slack-bot',
+                    version: '1.0.0',
+                    main: 'index.js',
+                    scripts: { start: 'node index.js' },
+                    dependencies: {
+                        '@slack/bolt': '^3.17.0'
+                    }
+                }, null, 2)
+            },
+            dependencies: ['@slack/bolt']
+        });
     }
 
     /**
@@ -1006,6 +1230,30 @@ const BotTemplates = {
         description: 'WhatsApp bot with pairing code authentication',
         sessionType: 'session_id',
         features: ['pairing-code', 'multi-device']
+    },
+    TELEGRAM: {
+        id: 'telegram',
+        name: 'Telegram Bot',
+        type: BotType.TELEGRAM,
+        description: 'A Telegram bot using node-telegram-bot-api',
+        sessionType: 'token',
+        features: ['polling', 'webhooks', 'commands']
+    },
+    DISCORD: {
+        id: 'discord',
+        name: 'Discord Bot',
+        type: BotType.DISCORD,
+        description: 'A Discord bot using discord.js',
+        sessionType: 'token',
+        features: ['slash-commands', 'message-handling', 'voice']
+    },
+    SLACK: {
+        id: 'slack',
+        name: 'Slack Bot',
+        type: BotType.SLACK,
+        description: 'A Slack bot using Bolt SDK',
+        sessionType: 'token',
+        features: ['slash-commands', 'events', 'modals']
     },
     CUSTOM: {
         id: 'custom',
