@@ -1,6 +1,6 @@
 {
   "name": "ladybugnodes",
-  "version": "7.1.0",
+  "version": "7.2.0",
   "description": "LADYBUGNODES V(7) — Ultimate Bot Hosting Platform with ZiG/USD Payments, Multi-Auth Sessions, Per-Bot Logging",
   "main": "server.js",
   "scripts": {

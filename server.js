@@ -20,7 +20,7 @@ const AdmZip     = require('adm-zip');
 
 // ───────── Config ──────────────────────────────────────────────────────────────────────────────
 const PORT         = process.env.PORT || 3000;
-const VERSION      = '7.1.0';
+const VERSION      = '7.2.0';
 const RENDER_URL   = process.env.RENDER_URL || '';
 const JWT_SECRET   = process.env.JWT_SECRET || 'ladybugnodes-secret-change-me';
 const PING_INTERVAL_MS = 14 * 60 * 1000;  // 14 minutes
@@ -1321,6 +1321,21 @@ try {
     log('Coin rewards system initialized (2 coins/day)', 'ok');
 } catch (error) {
     log(`Coin rewards system not loaded: ${error.message}`, 'warn');
+}
+
+// Server Management System
+let serverManagerInstance = null;
+try {
+    const { serverManager } = require('./utils/serverManager');
+    serverManagerInstance = serverManager;
+    serverManagerInstance.initialize();
+    
+    // Mount server routes
+    const serverRoutes = require('./routes/servers');
+    app.use('/api/servers', serverRoutes);
+    log('Server management system initialized', 'ok');
+} catch (error) {
+    log(`Server management system not loaded: ${error.message}`, 'warn');
 }
 
 // Subscription check helper
